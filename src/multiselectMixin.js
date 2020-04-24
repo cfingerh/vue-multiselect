@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 function isEmpty (opt) {
   if (opt === 0) return false
   if (Array.isArray(opt) && opt.length === 0) return true
@@ -8,13 +10,18 @@ function not (fun) {
   return (...params) => !fun(...params)
 }
 
+function removeAccents(str)
+{
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+}
+
 function includes (str, query) {
   /* istanbul ignore else */
   if (str === undefined) str = 'undefined'
   if (str === null) str = 'null'
   if (str === false) str = 'false'
-  const text = str.toString().toLowerCase()
-  return text.indexOf(query.trim()) !== -1
+  const text = removeAccents(str.toString().toLowerCase())
+  return text.indexOf(removeAccents(query.trim())) !== -1
 }
 
 function filterOptions (options, search, label, customLabel) {
@@ -363,7 +370,6 @@ export default {
           options.unshift({ isTag: true, label: search })
         }
       }
-
       return options.slice(0, this.optionsLimit)
     },
     valueKeys () {
@@ -571,8 +577,6 @@ export default {
           this.id
         )
       }
-      
-      if (this.closeOnSelect) this.deactivate()
     },
     /**
      * Helper to identify if all values in a group are selected
@@ -657,7 +661,7 @@ export default {
       /* istanbul ignore else  */
       if (this.searchable) {
         if (!this.preserveSearch) this.search = ''
-        this.$nextTick(() => this.$refs.search && this.$refs.search.focus())
+        this.$nextTick(() => this.$refs.search.focus())
       } else {
         this.$el.focus()
       }
@@ -674,7 +678,7 @@ export default {
       this.isOpen = false
       /* istanbul ignore else  */
       if (this.searchable) {
-        this.$refs.search && this.$refs.search.blur()
+        this.$refs.search.blur()
       } else {
         this.$el.blur()
       }
